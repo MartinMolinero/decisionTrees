@@ -1,0 +1,11 @@
+@relation or
+
+@attribute A {TRUE, FALSE}
+@attribute B {TRUE, FALSE}
+@attribute AorB {TRUE, FALSE}
+
+@data
+TRUE,TRUE,TRUE
+FALSE,FALSE,FALSE
+TRUE,FALSE,TRUE
+FALSE,TRUE,TRUE
