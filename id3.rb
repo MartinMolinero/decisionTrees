@@ -107,23 +107,25 @@ end
 
 def get_entropy(attributes, data)
   counter  = {}
-  puts "input entropy data #{data}"
+  #puts "input entropy data #{data}"
   arr_to_hash(attributes, counter)
   size = data.size
   data.each do |row|
     val = row.last.to_s
     counter[val] = counter[val]+1
   end
-  puts "counter #{counter}"
+  #puts "counter #{counter}"
   result = 0
   counter.each do |key, value|
     if (counter[key] > 0)
       proportion = value.to_f / size.to_f
+      #puts "Proportion = #{value.to_f} / #{size.to_f}"
       neg_prop = proportion * -1
       result += neg_prop * Math.log2(proportion)
+      #puts "TEMP ENTROPY result +=  #{neg_prop} * #{Math.log2(proportion)}"
     end
   end
-  puts "result #{result}"
+  #puts "result #{result}"
   return result
 end
 
@@ -131,12 +133,13 @@ def information_gain(data, h_total_entropy, attribute, attribute_index, last_att
   result = 0
   attribute.values.each do |a_v|
     filtered_data = reduce_rows(data, attribute_index, a_v)
-    puts "filtered for #{a_v} in space #{attribute_index} \ndata: #{filtered_data}"
+    #puts "filtered for #{a_v} in space #{attribute_index} \n data: #{filtered_data}"
     aux = get_entropy(last_attribute_values, filtered_data)
     result -= (aux * (filtered_data.length / data.length))
-    puts "formula = #{aux} * #{filtered_data.length} / #{data.length} "
+    #puts "formula = #{aux} * #{filtered_data.length} / #{data.length} "
+    #puts "result info gain #{result}"
   end
-  puts "info gain #{h_total_entropy} - #{result}"
+  #puts "info gain #{h_total_entropy} - #{result}"
   return h_total_entropy + result
 
 end
@@ -157,9 +160,11 @@ def split(attributes, data, last_attribute_values, h_total_entropy, visited, dep
   result = attributes[chosen_position]
   result.values.each do |v|
     filtered = reduce_rows(data, chosen_position, v)
-    puts "chosing #{result.name} value: #{v}"
+    ##puts "chosing #{result.name} value: #{v}"
+    puts "#{result.name} : #{v}"
     if(get_entropy(last_attribute_values, filtered) == 0)
-      puts "answer: #{result.name} value #{v}"
+      ##puts "answer: #{result.name} value #{v}"
+      puts "#{"Answer: #{filtered[0].last}"}"
     else
       visited.push(result)
       split(attributes, filtered, last_attribute_values, h_total_entropy, visited, depth+1)
@@ -181,7 +186,6 @@ def main
   depth = 0
   visited = []
   split(attributes, data, last_attribute_values, h_total_entropy, visited, depth)
-  puts "last attribute #{last_attribute.hash_filtered_data}"
 end
 
 main
