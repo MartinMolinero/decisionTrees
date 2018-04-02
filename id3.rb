@@ -107,24 +107,20 @@ end
 
 def get_entropy(attributes, data)
   counter  = {}
-  #puts "input entropy data #{data}"
   arr_to_hash(attributes, counter)
   size = data.size
   data.each do |row|
     val = row.last.to_s
     counter[val] = counter[val]+1
   end
-  #puts "counter #{counter}"
   result = 0
   counter.each do |key, value|
     if (counter[key] > 0)
       proportion = (value.to_f / size.to_f)
-      #puts "Proportion #{proportion} = #{value.to_f} / #{size.to_f} "
       neg_prop = proportion * -1
       result += neg_prop * Math.log2(proportion)
     end
   end
-  #puts "result #{result} = \n"
   return result.to_f
 end
 
@@ -132,30 +128,21 @@ def information_gain(data, h_total_entropy, attribute, attribute_index, last_att
   result = 0.0
   attribute.values.each do |a_v|
     filtered_data = reduce_rows(attribute_index, a_v, data)
-    #puts "filtered for attribute #{attribute.name} value: #{a_v} in space #{attribute_index}"
     aux = get_entropy(last_attribute_values, filtered_data)
-    ##puts "new entropy #{aux}\n"
     result += (-1 * aux.to_f * filtered_data.length / data.length )
-    #puts "#{result} formula = #{aux} * #{filtered_data.length} / #{data.length} = #{aux * (filtered_data.length.to_f / data.length.to_f)}"
-    ##puts "result info gain #{result}"
   end
   final = h_total_entropy + result
-  #puts "attr #{attribute.name} info gain #{h_total_entropy} + #{result} = final #{final} \n\n"
   return final
 
 end
 
 
 def split(attributes, data, last_attribute_values, h_total_entropy, visited, depth)
-  ##puts "current data #{data}"
   max = 0
   chosen_position = -1
   attributes.each_with_index do |a, i|
-    ##puts "visited #{visited} incluye i ? #{i}"
-    ##puts "visited nil #{visited.index(a).nil?} for node #{a.name}"
     if(visited.index(a).nil?)
       aux = information_gain(data, h_total_entropy, a, i, last_attribute_values)
-      ##puts " #{aux} info gain for node #{a.name} in position #{i} with data #{data}"
       if(aux > max)
         max = aux
         chosen_position = i
@@ -164,10 +151,8 @@ def split(attributes, data, last_attribute_values, h_total_entropy, visited, dep
   end
 
   result = attributes[chosen_position]
-  ##puts "max information gain #{max}  from node #{result.name} depth: #{depth}"
   result.values.each do |v|
     filtered = reduce_rows(chosen_position, v, data)
-    ##puts "chosing #{result.name} value: #{v}"
     times = 2*depth
     spaces_str = ' ' *times
     puts spaces_str + "#{result.name}: #{v}"
@@ -193,7 +178,6 @@ def main
   last_attribute_values = last_attribute.values
   last_attribute.filter_data(attribute_index, last_attribute_values, data)
   attributes.pop
-  ##puts "clean attributes #{attributes}"
   h_total_entropy = get_entropy(last_attribute_values, data)
   depth = 0
   visited = []
