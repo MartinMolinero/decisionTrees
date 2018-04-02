@@ -136,6 +136,15 @@ def information_gain(data, h_total_entropy, attribute, attribute_index, last_att
 
 end
 
+def isPure?(last_attribute_values, filtered_data)
+  entropy = get_entropy(last_attribute_values, filtered_data)
+  if(entropy == 0)
+    return true
+  else
+    return false
+  end
+end
+
 
 def split(attributes, data, last_attribute_values, h_total_entropy, visited, depth)
   max = 0
@@ -156,7 +165,7 @@ def split(attributes, data, last_attribute_values, h_total_entropy, visited, dep
     times = 2*depth
     spaces_str = ' ' *times
     puts spaces_str + "#{result.name}: #{v}"
-    if(get_entropy(last_attribute_values, filtered) == 0)
+    if(isPure?(last_attribute_values, filtered))
       aux_depth = depth +1
       times = 2*aux_depth
       spaces_str = ' ' *times
