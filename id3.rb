@@ -69,10 +69,10 @@ def get_attributes(total_input)
       attributes.push(a)
     end
   end
-  attributes
+  return attributes
 end
 
-def reduce_rows(data, attribute_index, value)
+def reduce_rows(attribute_index, value, data)
   filtered = []
   data.each do |row|
     if(row[attribute_index] == value)
@@ -96,7 +96,7 @@ def get_data(total_input)
       read = true
     end
   end
-  data
+  return data
 end
 
 def arr_to_hash(arr, hash)
@@ -107,64 +107,71 @@ end
 
 def get_entropy(attributes, data)
   counter  = {}
-  #puts "input entropy data #{data}"
+  puts "input entropy data #{data}"
   arr_to_hash(attributes, counter)
   size = data.size
   data.each do |row|
     val = row.last.to_s
     counter[val] = counter[val]+1
   end
-  #puts "counter #{counter}"
+  puts "counter #{counter}"
   result = 0
   counter.each do |key, value|
     if (counter[key] > 0)
-      proportion = value.to_f / size.to_f
-      #puts "Proportion = #{value.to_f} / #{size.to_f}"
+      proportion = (value.to_f / size.to_f)
+      puts "Proportion #{proportion} = #{value.to_f} / #{size.to_f} "
       neg_prop = proportion * -1
       result += neg_prop * Math.log2(proportion)
-      #puts "TEMP ENTROPY result +=  #{neg_prop} * #{Math.log2(proportion)}"
     end
   end
-  #puts "result #{result}"
-  return result
+  puts "result #{result} = \n"
+  return result.to_f
 end
 
 def information_gain(data, h_total_entropy, attribute, attribute_index, last_attribute_values)
-  result = 0
+  result = 0.0
   attribute.values.each do |a_v|
-    filtered_data = reduce_rows(data, attribute_index, a_v)
-    #puts "filtered for #{a_v} in space #{attribute_index} \n data: #{filtered_data}"
+    filtered_data = reduce_rows(attribute_index, a_v, data)
+    puts "filtered for attribute #{attribute.name} value: #{a_v} in space #{attribute_index}"
     aux = get_entropy(last_attribute_values, filtered_data)
-    result -= (aux * (filtered_data.length / data.length))
-    #puts "formula = #{aux} * #{filtered_data.length} / #{data.length} "
+    #puts "new entropy #{aux}\n"
+    result += (-1 * aux.to_f * filtered_data.length / data.length )
+    puts "#{result} formula = #{aux} * #{filtered_data.length} / #{data.length} = #{aux * (filtered_data.length.to_f / data.length.to_f)}"
     #puts "result info gain #{result}"
   end
-  #puts "info gain #{h_total_entropy} - #{result}"
-  return h_total_entropy + result
+  final = h_total_entropy + result
+  puts "attr #{attribute.name} info gain #{h_total_entropy} + #{result} = final #{final} \n\n"
+  return final
 
 end
 
 
 def split(attributes, data, last_attribute_values, h_total_entropy, visited, depth)
+  #puts "current data #{data}"
   max = 0
   chosen_position = -1
   attributes.each_with_index do |a, i|
-    if(!visited.include?(i))
+    #puts "visited #{visited} incluye i ? #{i}"
+    #puts "visited nil #{visited.index(a).nil?} for node #{a.name}"
+    if(visited.index(a).nil?)
       aux = information_gain(data, h_total_entropy, a, i, last_attribute_values)
+      #puts " #{aux} info gain for node #{a.name} in position #{i} with data #{data}"
       if(aux > max)
         max = aux
         chosen_position = i
       end
     end
   end
+
   result = attributes[chosen_position]
+  #puts "max information gain #{max}  from node #{result.name} depth: #{depth}"
   result.values.each do |v|
-    filtered = reduce_rows(data, chosen_position, v)
-    ##puts "chosing #{result.name} value: #{v}"
+    filtered = reduce_rows(chosen_position, v, data)
+    #puts "chosing #{result.name} value: #{v}"
     puts "#{result.name} : #{v}"
     if(get_entropy(last_attribute_values, filtered) == 0)
-      ##puts "answer: #{result.name} value #{v}"
-      puts "#{"Answer: #{filtered[0].last}"}"
+      #puts "answer: #{result.name} value #{v}"
+      puts "#{"Answer: #{filtered[0]}"}"
     else
       visited.push(result)
       split(attributes, filtered, last_attribute_values, h_total_entropy, visited, depth+1)
