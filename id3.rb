@@ -139,7 +139,7 @@ end
 
 def split(attributes, data, last_attribute_values, h_total_entropy, visited, depth)
   max = 0
-  chosen_position = -1
+  chosen_position = 0
   attributes.each_with_index do |a, i|
     if(visited.index(a).nil?)
       aux = information_gain(data, h_total_entropy, a, i, last_attribute_values)
