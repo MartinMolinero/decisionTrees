@@ -1,0 +1,42 @@
+Execution Plan
+----------------------------------------------------------
+Plan hash value: 3251251308
+
+--------------------------------------------------------------------------------
+----
+
+| Id  | Operation         | Name           | Rows  | Bytes | Cost (%CPU)| Time
+   |
+
+--------------------------------------------------------------------------------
+----
+
+|   0 | SELECT STATEMENT  |                |  2970 | 47520 |    18   (6)| 00:00:
+01 |
+
+|*  1 |  TABLE ACCESS FULL| L8DEPARTAMENTO |  2970 | 47520 |    18   (6)| 00:00:
+01 |
+
+--------------------------------------------------------------------------------
+----
+
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   1 - filter("DEPARTAMENTO"='Ventas')
+
+
+Statistics
+----------------------------------------------------------
+          0  recursive calls
+          0  db block gets
+        252  consistent gets
+          0  physical reads
+          0  redo size
+      66383  bytes sent via SQL*Net to client
+       2691  bytes received via SQL*Net from client
+        199  SQL*Net roundtrips to/from client
+          0  sorts (memory)
+          0  sorts (disk)
+       2970  rows processed
